@@ -209,12 +209,12 @@ header nav .nav-sections ul > li {
 
 header nav .nav-sections ul > li > a {  
   font-size: 18px;
-  color: var(--nav-text-color);
+  color: #000000;
   text-decoration: none;
   font-family: var(--body-font-family);
 }
 header nav .nav-sections ul > li > a:hover {
-  color: var(--nav-text-color);
+  color: #000000;
 }
 
 header nav .nav-sections ul > li > a::before {
