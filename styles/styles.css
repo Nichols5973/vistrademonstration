@@ -38,8 +38,8 @@
   --light-color-opacity: rgba(255, 255, 255, 0.5);
   --tab-background-color: rgba(0, 0, 0, 0.02);
   /* brand-scoped header/footer variables with sensible defaults */
-  --nav-background-color: var(--brand-nav-background-color, #0000008c);
-  --nav-text-color: var(--brand-nav-text-color, #ffffff);
+  --nav-background-color: var(--brand-nav-background-color, #ffffff);
+  --nav-text-color: var(--brand-nav-text-color, #000);
   --footer-background-color: var(--brand-footer-background-color, #000);
   --footer-text-color: var(--brand-footer-text-color, #ffffff);
   
@@ -97,6 +97,13 @@
 
   /* nav height */
   --nav-height: 64px;
+  --header-height: 64px;
+}
+
+@media (width >= 1200px) {
+  :root {
+    --header-height: 72px;
+  }
 }
 
 /* fallback fonts */
@@ -391,13 +398,16 @@ body.blue-theme header .nav-wrapper nav .nav-sections ul > li > a:hover{
 }
 /*theme header-footer*/
 header {
-  height: var(--nav-height);
-  min-height: 90px;
-  position: fixed;
+  height: var(--header-height);
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 111;
+}
+
+@media (width >= 1200px) {
+  header {
+    position: relative;
+  }
 }
 
 header .header,

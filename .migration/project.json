@@ -1,0 +1,13 @@
+{
+  "sites": {
+    "vistrademonstration": {
+      "previewOrg": "Nichols5973",
+      "previewSite": "vistrademonstration",
+      "contentHostUrl": "author-p87302-e1492027.adobeaemcloud.com",
+      "aemSitePath": "/content/vistrademonstration",
+      "aemAssetsFolderPath": "/content/dam/vistrademonstration",
+      "aemSiteName": "vistrademonstration",
+      "aemSiteTitle": "vistrademonstration"
+    }
+  }
+}
