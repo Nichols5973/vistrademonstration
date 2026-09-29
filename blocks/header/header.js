@@ -185,6 +185,10 @@ function stripButtons(nav) {
 function decorateTools(navTools) {
   navTools.querySelectorAll('a').forEach((link) => {
     link.classList.add('nav-cta');
+    // icons authored next to the link (same paragraph) belong inside the button
+    const siblingIcons = [...(link.parentElement?.children || [])]
+      .filter((el) => el !== link && el.classList.contains('icon'));
+    link.prepend(...siblingIcons);
     const label = link.textContent.trim();
     const sep = label.indexOf(':');
     const icons = [...link.querySelectorAll('.icon')];
@@ -215,6 +219,65 @@ function decorateTools(navTools) {
 function decorateSections(navSections) {
   navSections.querySelectorAll('p').forEach((p) => {
     if (p.querySelector('.icon') && !p.textContent.trim()) p.classList.add('nav-icon-group');
+  });
+}
+
+/**
+ * Closes all open nav dropdowns.
+ * @param {Element} navSections sections element
+ */
+function closeMenus(navSections) {
+  navSections.querySelectorAll('.nav-drop-toggle[aria-expanded="true"]').forEach((toggle) => {
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+}
+
+/**
+ * Decorates authored menu lists in the nav sections as a horizontal menu.
+ * Items with a nested list become dropdowns (hover, focus or click to open).
+ * @param {Element} navSections sections element
+ */
+function decorateMenus(navSections) {
+  const menus = navSections.querySelectorAll(':scope .default-content-wrapper > ul');
+  if (!menus.length) return;
+
+  menus.forEach((menu) => {
+    menu.classList.add('nav-menu');
+    [...menu.children].forEach((item) => {
+      const submenu = item.querySelector(':scope > ul');
+      if (!submenu) return;
+      item.classList.add('nav-drop');
+      submenu.classList.add('nav-submenu');
+
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'nav-drop-toggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      const link = item.querySelector(':scope > a, :scope > p > a');
+      if (link) {
+        toggle.setAttribute('aria-label', `${link.textContent.trim()} menu`);
+        item.insertBefore(toggle, submenu);
+      } else {
+        const labelNodes = [...item.childNodes].filter((node) => node !== submenu);
+        toggle.textContent = labelNodes.map((node) => node.textContent).join(' ').trim();
+        labelNodes.forEach((node) => node.remove());
+        item.prepend(toggle);
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        closeMenus(navSections);
+        toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      });
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!navSections.contains(e.target)) closeMenus(navSections);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenus(navSections);
   });
 }
 
@@ -264,7 +327,10 @@ export default async function decorate(block) {
   }
 
   const navSections = nav.querySelector('.nav-sections');
-  if (navSections) decorateSections(navSections);
+  if (navSections) {
+    decorateSections(navSections);
+    decorateMenus(navSections);
+  }
 
   const navTools = nav.querySelector('.nav-tools');
   if (navTools) decorateTools(navTools);

@@ -116,14 +116,108 @@ header nav .nav-sections .nav-icon-group + p::before {
   border-left: 1px solid #d3d6dc;
 }
 
-header nav .nav-sections a:any-link {
+/* sections: authored menu lists */
+header nav .nav-sections ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+header nav .nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+header nav .nav-menu > li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 24px 0;
+  color: var(--header-blue-dark);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+header nav .nav-menu .nav-drop-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+header nav .nav-menu .nav-drop-toggle::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-top: -4px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+header nav .nav-menu .nav-submenu {
+  position: absolute;
+  top: 100%;
+  left: -16px;
+  z-index: 10;
+  display: none;
+  min-width: 220px;
+  padding: 8px 0;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 2px -1px rgb(0 0 0 / 12%), 0 4px 12px -1px rgb(0 0 0 / 16%);
+  color: var(--header-blue);
+  font-weight: 400;
+}
+
+header nav .nav-menu > .nav-drop:hover > .nav-submenu,
+header nav .nav-menu > .nav-drop:focus-within > .nav-submenu,
+header nav .nav-menu .nav-drop-toggle[aria-expanded='true'] + .nav-submenu {
+  display: block;
+}
+
+header nav .nav-menu > .nav-drop:hover > .nav-drop-toggle::after,
+header nav .nav-menu .nav-drop-toggle[aria-expanded='true']::after {
+  margin-top: 4px;
+  transform: rotate(-135deg);
+}
+
+header nav .nav-menu a:any-link {
+  color: inherit;
+}
+
+header nav .nav-menu a:hover,
+header nav .nav-menu .nav-drop-toggle:hover {
+  color: var(--header-blue);
+}
+
+header nav .nav-menu .nav-submenu a:any-link {
+  display: block;
+  padding: 8px 16px;
+}
+
+header nav .nav-menu .nav-submenu a:hover {
+  background-color: #f2f7fc;
+  color: var(--header-blue-dark);
+}
+
+header nav .nav-sections .default-content-wrapper > p a:any-link {
   color: var(--header-blue);
   border-bottom: 1px solid var(--header-blue);
   text-decoration: none;
   white-space: nowrap;
 }
 
-header nav .nav-sections a:hover {
+header nav .nav-sections .default-content-wrapper > p a:hover {
   color: var(--header-blue);
   text-decoration: none;
 }
