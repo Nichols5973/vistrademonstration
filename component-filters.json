@@ -15,6 +15,7 @@
       "carousel",
       "columns",
       "contentfragment",
+      "plan-card",
       "dm-template",
       "dynamic-media-image",
       "fragment",
@@ -63,7 +64,7 @@
     "components": [
       "button",
       "image",
-      "text",      
+      "text",
       "title",
       "video"
     ]

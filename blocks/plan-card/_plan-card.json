@@ -1,0 +1,44 @@
+{
+  "definitions": [
+    {
+      "title": "Plan Card",
+      "id": "plan-card",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Plan Card",
+              "model": "plan-card"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "plan-card",
+      "fields": [
+        {
+          "component": "aem-content-fragment",
+          "name": "reference",
+          "label": "Plan Card Content Fragment",
+          "valueType": "string",
+          "required": true,
+          "variationName": "planCardVariation"
+        },
+        {
+          "component": "text",
+          "name": "planCardVariation",
+          "label": "Selected Variation",
+          "value": "",
+          "valueType": "string",
+          "description": "Persisted variation for publish; leave empty for master.",
+          "condition": { "==": [{ "var": "__alwaysFalse" }, true] }
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

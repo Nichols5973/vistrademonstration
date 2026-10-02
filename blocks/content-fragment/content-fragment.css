@@ -469,3 +469,195 @@
 .content-fragment-wrapper .content-fragment .banner-content .banner-detail.text-right .cftitle::after {
   margin-right: 0;
 }
+
+/* Rate Card style - modeled on the TXU featured plan card */
+.content-fragment-wrapper .content-fragment .banner-content.rate-card {
+  --rate-card-navy: #003f6e;
+  --rate-card-blue: #0075da;
+  --rate-card-text: #3f475a;
+  --rate-card-divider: #d3d6dc;
+  --rate-card-gradient: linear-gradient(131.32deg, var(--rate-card-navy) 0%, var(--rate-card-blue) 100%);
+
+  display: block;
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  max-width: 1200px;
+  margin: 16px;
+  padding: 3px;
+  border-radius: 16px;
+  background-image: var(--rate-card-gradient);
+  box-shadow: 0 5px 24px -4px rgb(0 0 0 / 20%), 0 2px 6px -3px rgb(0 0 0 / 9%);
+  font-family: myriad-pro, var(--body-font-family);
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 24px;
+  border-radius: 13px;
+  background-color: #fff;
+  color: var(--rate-card-text);
+  text-align: left;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-body.text-center .rate-card-main {
+  align-items: center;
+  text-align: center;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-body.text-right .rate-card-main {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.content-fragment-wrapper .content-fragment .banner-content.rate-card .rate-card-main .cfsubtitle {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-image: var(--rate-card-gradient);
+  color: #fff;
+  font-family: myriad-pro, var(--black-font-family);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 20px;
+}
+
+.content-fragment-wrapper .content-fragment .banner-content.rate-card .rate-card-main .cftitle {
+  margin: 0;
+  color: var(--rate-card-navy);
+  font-family: myriad-pro, var(--black-font-family);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 36px;
+}
+
+.content-fragment-wrapper .content-fragment .banner-content.rate-card .rate-card-body .rate-card-main .cfdescription {
+  width: auto;
+  margin: 0;
+  color: var(--rate-card-text);
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.content-fragment-wrapper .content-fragment .banner-content.rate-card .rate-card-body .rate-card-main .cfdescription p {
+  margin: 0;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta {
+  margin: 16px 0 0;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 24px;
+  border: 1px solid var(--rate-card-blue);
+  border-radius: 1000px;
+  background-color: var(--rate-card-blue);
+  color: #fff;
+  font-family: myriad-pro, var(--black-font-family);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 20px;
+  text-decoration: none;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta a.button::after {
+  content: none;
+  display: none;
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta a.button:hover,
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta a.button:focus-visible {
+  border-color: var(--rate-card-navy);
+  background-color: var(--rate-card-navy);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* "Link" CTA style renders like TXU's bold "Plan Details" link */
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta.rate-card-link a.button {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 2px solid var(--rate-card-blue);
+  border-radius: 0;
+  background: none;
+  color: var(--rate-card-blue);
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-cta.rate-card-link a.button:hover {
+  border-color: var(--rate-card-navy);
+  background: none;
+  color: var(--rate-card-navy);
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--rate-card-divider);
+}
+
+.content-fragment-wrapper .content-fragment .rate-card .rate-card-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+@media (width >= 900px) {
+  .content-fragment-wrapper .content-fragment .banner-content.rate-card {
+    margin: 16px auto;
+  }
+
+  .content-fragment-wrapper .content-fragment .rate-card .rate-card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 36px;
+  }
+
+  .content-fragment-wrapper .content-fragment .rate-card .rate-card-body:has(.rate-card-media) {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  }
+
+  .content-fragment-wrapper .content-fragment .rate-card .rate-card-media {
+    align-self: stretch;
+    padding: 0 0 0 36px;
+    border-top: 0;
+    border-left: 1px solid var(--rate-card-divider);
+  }
+
+  .content-fragment-wrapper .content-fragment .banner-content.rate-card .rate-card-main .cftitle {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .content-fragment-wrapper .content-fragment .banner-content.rate-card .rate-card-body .rate-card-main .cfdescription {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
