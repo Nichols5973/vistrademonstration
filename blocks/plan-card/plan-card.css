@@ -274,3 +274,45 @@ html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-footer:n
     padding: 0;
   }
 }
+
+/* a plan card mixed with other content in one section: card on the left,
+   the rest of the section (e.g. a heading and an accordion) stacked on the right */
+@media (width >= 900px) {
+  main .section:has(> div > .plan-card):has(> div > :not(.plan-card)) {
+    display: grid;
+    grid-template-columns: minmax(280px, 405px) minmax(0, 1fr);
+    align-items: start;
+    gap: 0 48px;
+    box-sizing: border-box;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  main .section:has(> div > .plan-card):has(> div > :not(.plan-card)) > div:has(> .plan-card) {
+    grid-column: 1;
+    grid-row: 1 / span 50;
+    max-width: 405px;
+    margin: 0;
+    padding: 0;
+  }
+
+  main .section:has(> div > .plan-card):has(> div > :not(.plan-card)) > div:not(:has(> .plan-card)) {
+    grid-column: 2;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  main .section:has(> div > .plan-card):has(> div > :not(.plan-card)) > .default-content-wrapper {
+    text-align: left;
+  }
+
+  main .section:has(> div > .plan-card):has(> div > :not(.plan-card)) > div:not(:has(> .plan-card)) + div:not(:has(> .plan-card)) {
+    margin-top: 24px;
+  }
+
+  main .section:has(> div > .plan-card):has(> div > :not(.plan-card)) > .default-content-wrapper > :first-child {
+    margin-top: 0;
+  }
+}
