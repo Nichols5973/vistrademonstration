@@ -108,6 +108,12 @@ async function fetchPlanCard(contentPath, variation, env) {
  */
 async function renderCard(cf, itemId, variation, env) {
   const prop = (name, label, type = 'text') => `data-aue-prop="${name}" data-aue-label="${label}" data-aue-type="${type}"`;
+  // in the author environment, empty fields render as placeholders so they can be
+  // filled in Universal Editor (hidden outside edit mode via CSS)
+  const showEmpty = env.isAuthor;
+  const placeholder = (text) => `<span class="plan-card-placeholder-text">${text}</span>`;
+  const empty = (value) => (showEmpty && !value ? ' plan-card-placeholder' : '');
+
   const description = cf.description?.html || (cf.description?.plaintext ? `<p>${escapeHtml(cf.description.plaintext)}</p>` : '');
   const { value: rateValue, unit: rateUnit } = cf.rate ? splitRate(cf.rate) : {};
   const [buttonHref, detailsHref] = await Promise.all([
@@ -117,25 +123,42 @@ async function renderCard(cf, itemId, variation, env) {
   const phone = cf.phoneNumber ? String(cf.phoneNumber).trim() : '';
   const phoneHref = phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : '';
   const detailsLabel = cf.planDetailsLabel || 'See Plan Details';
-  const hasFooter = detailsHref || phone;
+  const hasPricing = rateValue || cf.rateDescription || cf.term || showEmpty;
+  const hasFooter = detailsHref || phone || showEmpty;
+
+  const header = cf.header || showEmpty
+    ? `<p class="plan-card-header${empty(cf.header)}" ${prop('header', 'Header')}>${cf.header ? escapeHtml(cf.header) : placeholder('Add header')}</p>` : '';
+  const title = cf.title || showEmpty
+    ? `<h3 class="plan-card-title${empty(cf.title)}" ${prop('title', 'Title')}>${cf.title ? escapeHtml(cf.title) : placeholder('Add title')}</h3>` : '';
+  const desc = description || showEmpty
+    ? `<div class="plan-card-description${empty(description)}" ${prop('description', 'Description', 'richtext')}>${description || `<p>${placeholder('Add description')}</p>`}</div>` : '';
+  const rate = rateValue || showEmpty
+    ? `<p class="plan-card-rate${empty(rateValue)}" ${prop('rate', 'Rate')}>${rateValue
+      ? `<span class="plan-card-rate-value">${escapeHtml(rateValue)}</span><span class="plan-card-rate-unit">${escapeHtml(rateUnit)}</span>`
+      : placeholder('Add rate')}</p>` : '';
+  const rateDescription = cf.rateDescription || showEmpty
+    ? `<p class="plan-card-rate-description${empty(cf.rateDescription)}" ${prop('rateDescription', 'Rate Description')}>${cf.rateDescription ? escapeHtml(cf.rateDescription) : placeholder('Add rate description')}</p>` : '';
+  const term = cf.term || showEmpty
+    ? `<p class="plan-card-term${empty(cf.term)}" ${prop('term', 'Term')}>${cf.term ? escapeHtml(cf.term) : placeholder('Add term')}</p>` : '';
+  const promotion = cf.promotion || showEmpty
+    ? `<p class="plan-card-promotion${empty(cf.promotion)}" ${prop('promotion', 'Promotion')}>${cf.promotion ? escapeHtml(cf.promotion) : placeholder('Add promotion')}</p>` : '';
+  const button = cf.buttonLabel || showEmpty
+    ? `<p class="plan-card-cta${empty(cf.buttonLabel)}"><a class="plan-card-button" href="${escapeHtml(buttonHref || '#')}" ${prop('buttonLink', 'Button Link', 'reference')} data-aue-filter="page"><span ${prop('buttonLabel', 'Button Label')}>${cf.buttonLabel ? escapeHtml(cf.buttonLabel) : 'Add button label'}</span></a></p>` : '';
+  const details = detailsHref || showEmpty
+    ? `<a class="plan-card-details${empty(detailsHref)}" href="${escapeHtml(detailsHref || '#')}" ${prop('planDetailsLink', 'Plan Details Link', 'reference')} data-aue-filter="page"><span ${prop('planDetailsLabel', 'Plan Details Label')}>${detailsHref ? escapeHtml(detailsLabel) : 'Add plan details link'}</span></a>` : '';
+  const phoneLink = phone || showEmpty
+    ? `<a class="plan-card-phone${empty(phone)}" href="${escapeHtml(phoneHref || '#')}" ${prop('phoneNumber', 'Phone Number')}><span class="plan-card-phone-icon" aria-hidden="true"></span>${phone ? escapeHtml(phone) : 'Add phone number'}</a>` : '';
 
   return `<article class="plan-card-item" data-aue-resource="${itemId}" data-aue-label="${escapeHtml(variation)}" data-aue-type="reference" data-aue-filter="contentfragment">
-    ${cf.header ? `<p class="plan-card-header" ${prop('header', 'Header')}>${escapeHtml(cf.header)}</p>` : ''}
+    ${header}
     <div class="plan-card-body">
-      ${cf.title ? `<h3 class="plan-card-title" ${prop('title', 'Title')}>${escapeHtml(cf.title)}</h3>` : ''}
-      ${description ? `<div class="plan-card-description" ${prop('description', 'Description', 'richtext')}>${description}</div>` : ''}
-      ${rateValue || cf.rateDescription || cf.term ? `<div class="plan-card-pricing">
-        ${rateValue ? `<p class="plan-card-rate" ${prop('rate', 'Rate')}><span class="plan-card-rate-value">${escapeHtml(rateValue)}</span><span class="plan-card-rate-unit">${escapeHtml(rateUnit)}</span></p>` : ''}
-        ${cf.rateDescription ? `<p class="plan-card-rate-description" ${prop('rateDescription', 'Rate Description')}>${escapeHtml(cf.rateDescription)}</p>` : ''}
-        ${cf.term ? `<p class="plan-card-term" ${prop('term', 'Term')}>${escapeHtml(cf.term)}</p>` : ''}
-      </div>` : ''}
-      ${cf.promotion ? `<p class="plan-card-promotion" ${prop('promotion', 'Promotion')}>${escapeHtml(cf.promotion)}</p>` : ''}
-      ${cf.buttonLabel ? `<p class="plan-card-cta"><a class="plan-card-button" href="${escapeHtml(buttonHref || '#')}" ${prop('buttonLink', 'Button Link', 'reference')} data-aue-filter="page"><span ${prop('buttonLabel', 'Button Label')}>${escapeHtml(cf.buttonLabel)}</span></a></p>` : ''}
+      ${title}
+      ${desc}
+      ${hasPricing ? `<div class="plan-card-pricing">${rate}${rateDescription}${term}</div>` : ''}
+      ${promotion}
+      ${button}
     </div>
-    ${hasFooter ? `<div class="plan-card-footer">
-      ${detailsHref ? `<a class="plan-card-details" href="${escapeHtml(detailsHref)}" ${prop('planDetailsLink', 'Plan Details Link', 'reference')} data-aue-filter="page"><span ${prop('planDetailsLabel', 'Plan Details Label')}>${escapeHtml(detailsLabel)}</span></a>` : ''}
-      ${phone ? `<a class="plan-card-phone" href="${escapeHtml(phoneHref)}" ${prop('phoneNumber', 'Phone Number')}><span class="plan-card-phone-icon" aria-hidden="true"></span>${escapeHtml(phone)}</a>` : ''}
-    </div>` : ''}
+    ${hasFooter ? `<div class="plan-card-footer">${details}${phoneLink}</div>` : ''}
   </article>`;
 }
 

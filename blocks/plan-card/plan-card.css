@@ -6,6 +6,10 @@
   --plan-card-green: #00a376;
   --plan-card-orange: #f47b20;
 
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 405px;
+  margin-inline: auto;
   font-family: myriad-pro, var(--body-font-family);
 }
 
@@ -216,6 +220,25 @@
   height: 20px;
   background-color: currentcolor;
   mask: url('../../icons/phone.svg') center / contain no-repeat;
+}
+
+/* empty-field placeholders: visible only while editing in Universal Editor */
+.plan-card .plan-card-placeholder {
+  outline: 1px dashed #9aa3b2;
+  outline-offset: 2px;
+}
+
+.plan-card .plan-card-placeholder .plan-card-placeholder-text,
+.plan-card .plan-card-placeholder.plan-card-cta,
+.plan-card .plan-card-footer .plan-card-placeholder {
+  font-style: italic;
+  opacity: 0.6;
+}
+
+html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-placeholder,
+html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-pricing:not(:has(> :not(.plan-card-placeholder))),
+html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-footer:not(:has(> :not(.plan-card-placeholder))) {
+  display: none;
 }
 
 /* cards placed in the same section sit side by side */
