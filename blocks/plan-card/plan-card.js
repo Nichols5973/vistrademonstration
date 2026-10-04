@@ -144,15 +144,16 @@ async function renderCard(cf, itemId, variation, env) {
     ? `<p class="plan-card-promotion${empty(cf.promotion)}" ${prop('promotion', 'Promotion')}>${cf.promotion ? escapeHtml(cf.promotion) : placeholder('Add promotion')}</p>` : '';
   const button = cf.buttonLabel || showEmpty
     ? `<p class="plan-card-cta${empty(cf.buttonLabel)}"><a class="plan-card-button" href="${escapeHtml(buttonHref || '#')}" ${prop('buttonLink', 'Button Link', 'reference')} data-aue-filter="page"><span ${prop('buttonLabel', 'Button Label')}>${cf.buttonLabel ? escapeHtml(cf.buttonLabel) : 'Add button label'}</span></a></p>` : '';
+  const detailsText = cf.planDetailsLabel || (detailsHref ? detailsLabel : 'Add plan details link');
   const details = detailsHref || showEmpty
-    ? `<a class="plan-card-details${empty(detailsHref)}" href="${escapeHtml(detailsHref || '#')}"><span ${prop('planDetailsLabel', 'Plan Details Label')}>${detailsHref ? escapeHtml(detailsLabel) : 'Add plan details link'}</span></a>` : '';
-  // plan details link is a text field: in Universal Editor its URL is shown as an
-  // editable line under the card (hidden outside edit mode)
+    ? `<a class="plan-card-details${empty(detailsHref)}" href="${escapeHtml(detailsHref || '#')}"><span ${prop('planDetailsLabel', 'Plan Details Label')}>${escapeHtml(detailsText)}</span></a>` : '';
+  // the link URL is a text field; it is instrumented (but not shown) so it can be
+  // edited from the Content Tree / properties panel in Universal Editor
   const detailsUrl = typeof cf.planDetailsLink === 'object'
     ? cf.planDetailsLink?._path || ''
     : String(cf.planDetailsLink || '').trim();
   const detailsUrlField = showEmpty
-    ? `<p class="plan-card-link-field${empty(detailsUrl)}" ${prop('planDetailsLink', 'Plan Details Link')}>${detailsUrl ? escapeHtml(detailsUrl) : placeholder('Add plan details link URL')}</p>` : '';
+    ? `<span class="plan-card-link-field" hidden ${prop('planDetailsLink', 'Plan Details Link')}>${escapeHtml(detailsUrl)}</span>` : '';
   const phoneLink = phone || showEmpty
     ? `<a class="plan-card-phone${empty(phone)}" href="${escapeHtml(phoneHref || '#')}" ${prop('phoneNumber', 'Phone Number')}><span class="plan-card-phone-icon" aria-hidden="true"></span>${phone ? escapeHtml(phone) : 'Add phone number'}</a>` : '';
 

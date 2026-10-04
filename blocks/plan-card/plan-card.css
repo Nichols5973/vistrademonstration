@@ -222,28 +222,6 @@
   mask: url('../../icons/phone.svg') center / contain no-repeat;
 }
 
-/* plan details link URL, editable in Universal Editor only */
-.plan-card .plan-card-item .plan-card-link-field {
-  margin: -12px 32px 20px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background-color: #f2f4f7;
-  color: var(--plan-card-text);
-  font-size: 12px;
-  line-height: 16px;
-  text-align: left;
-  word-break: break-all;
-}
-
-.plan-card .plan-card-link-field::before {
-  content: 'Plan details link: ';
-  font-weight: 700;
-}
-
-html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-link-field {
-  display: none;
-}
-
 /* empty-field placeholders: visible only while editing in Universal Editor */
 .plan-card .plan-card-placeholder {
   outline: 1px dashed #9aa3b2;
