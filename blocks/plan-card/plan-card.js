@@ -145,7 +145,14 @@ async function renderCard(cf, itemId, variation, env) {
   const button = cf.buttonLabel || showEmpty
     ? `<p class="plan-card-cta${empty(cf.buttonLabel)}"><a class="plan-card-button" href="${escapeHtml(buttonHref || '#')}" ${prop('buttonLink', 'Button Link', 'reference')} data-aue-filter="page"><span ${prop('buttonLabel', 'Button Label')}>${cf.buttonLabel ? escapeHtml(cf.buttonLabel) : 'Add button label'}</span></a></p>` : '';
   const details = detailsHref || showEmpty
-    ? `<a class="plan-card-details${empty(detailsHref)}" href="${escapeHtml(detailsHref || '#')}" ${prop('planDetailsLink', 'Plan Details Link', 'reference')} data-aue-filter="page"><span ${prop('planDetailsLabel', 'Plan Details Label')}>${detailsHref ? escapeHtml(detailsLabel) : 'Add plan details link'}</span></a>` : '';
+    ? `<a class="plan-card-details${empty(detailsHref)}" href="${escapeHtml(detailsHref || '#')}"><span ${prop('planDetailsLabel', 'Plan Details Label')}>${detailsHref ? escapeHtml(detailsLabel) : 'Add plan details link'}</span></a>` : '';
+  // plan details link is a text field: in Universal Editor its URL is shown as an
+  // editable line under the card (hidden outside edit mode)
+  const detailsUrl = typeof cf.planDetailsLink === 'object'
+    ? cf.planDetailsLink?._path || ''
+    : String(cf.planDetailsLink || '').trim();
+  const detailsUrlField = showEmpty
+    ? `<p class="plan-card-link-field${empty(detailsUrl)}" ${prop('planDetailsLink', 'Plan Details Link')}>${detailsUrl ? escapeHtml(detailsUrl) : placeholder('Add plan details link URL')}</p>` : '';
   const phoneLink = phone || showEmpty
     ? `<a class="plan-card-phone${empty(phone)}" href="${escapeHtml(phoneHref || '#')}" ${prop('phoneNumber', 'Phone Number')}><span class="plan-card-phone-icon" aria-hidden="true"></span>${phone ? escapeHtml(phone) : 'Add phone number'}</a>` : '';
 
@@ -159,6 +166,7 @@ async function renderCard(cf, itemId, variation, env) {
       ${button}
     </div>
     ${hasFooter ? `<div class="plan-card-footer">${details}${phoneLink}</div>` : ''}
+    ${detailsUrlField}
   </article>`;
 }
 
