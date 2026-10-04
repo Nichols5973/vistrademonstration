@@ -241,9 +241,20 @@ html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-footer:n
   display: none;
 }
 
-/* cards placed in the same section sit side by side */
+.plan-card .plan-card-notice {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed #9aa3b2;
+  border-radius: 8px;
+  color: var(--plan-card-text);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* cards placed in the same section sit side by side
+   (Plan Card blocks, or Content Fragment blocks using the Plan Card style) */
 @media (width >= 900px) {
-  main .section.plan-card-container {
+  main .section:has(> div > .plan-card) {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -251,13 +262,14 @@ html:not(.adobe-ue-edit) body:not(.adobe-ue-edit) .plan-card .plan-card-footer:n
     gap: 32px;
   }
 
-  main .section.plan-card-container > div {
+  main .section:has(> div > .plan-card) > div {
     flex: 1 1 100%;
   }
 
-  main .section.plan-card-container > .plan-card-wrapper {
+  main .section:has(> div > .plan-card) > div:has(> .plan-card) {
     flex: 0 1 405px;
     min-width: 280px;
+    max-width: 405px;
     margin: 0;
     padding: 0;
   }

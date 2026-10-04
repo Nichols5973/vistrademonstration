@@ -163,6 +163,16 @@ async function renderCard(cf, itemId, variation, env) {
 }
 
 /**
+ * Shows a hint in the author environment when no Plan Card data could be loaded.
+ * @param {Element} block
+ * @param {object} env environment details
+ */
+function showAuthorHint(block, env) {
+  if (!env.isAuthor) return;
+  block.innerHTML = '<p class="plan-card-notice">Select a content fragment built from the <strong>Plan Card</strong> model to display this card.</p>';
+}
+
+/**
  * Plan Card: renders a "Plan Card" content fragment (with variation support).
  * @param {Element} block
  */
@@ -181,13 +191,17 @@ export default async function decorate(block) {
   };
 
   block.textContent = '';
-  if (!contentPath) return;
+  if (!contentPath) {
+    showAuthorHint(block, env);
+    return;
+  }
 
   try {
     const cf = await fetchPlanCard(contentPath, variation, env);
     if (!cf) {
       // eslint-disable-next-line no-console
       console.error('plan-card: no content fragment data found', { contentPath, variation });
+      showAuthorHint(block, env);
       return;
     }
     const itemId = `urn:aemconnection:${contentPath}/jcr:content/data/${variation}`;
@@ -199,5 +213,6 @@ export default async function decorate(block) {
       error: error.message, contentPath, variation, isAuthor: env.isAuthor,
     });
     block.textContent = '';
+    showAuthorHint(block, env);
   }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */ // AEM GraphQL fields (_authorUrl, _path, ...)
-import { getMetadata } from '../../scripts/aem.js';
+import { getMetadata, loadCSS } from '../../scripts/aem.js';
 import { isAuthorEnvironment } from '../../scripts/scripts.js';
 import { getHostname, mapAemPathToSitePath } from '../../scripts/utils.js';
 
@@ -26,6 +26,17 @@ export default async function decorate(block) {
   const displayStyle = block.querySelector(':scope div:nth-child(3) > div')?.textContent?.trim() || '';
   const alignment = block.querySelector(':scope div:nth-child(4) > div')?.textContent?.trim() || '';
   const ctaStyle = block.querySelector(':scope div:nth-child(5) > div')?.textContent?.trim() || 'button';
+
+  // "Plan Card" style: render a Plan Card content fragment with the plan-card block
+  if (displayStyle === 'plan-card') {
+    const [{ default: decoratePlanCard }] = await Promise.all([
+      import('../plan-card/plan-card.js'),
+      loadCSS(`${window.hlx.codeBasePath}/blocks/plan-card/plan-card.css`),
+    ]);
+    block.classList.add('plan-card');
+    await decoratePlanCard(block);
+    return;
+  }
 
   block.innerHTML = '';
   const isAuthor = isAuthorEnvironment();

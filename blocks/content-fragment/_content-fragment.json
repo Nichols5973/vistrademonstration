@@ -72,6 +72,10 @@
             {
               "name": "Rate Card",
               "value": "rate-card"
+            },
+            {
+              "name": "Plan Card",
+              "value": "plan-card"
             }
           ]
         },
