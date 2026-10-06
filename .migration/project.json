@@ -7,7 +7,8 @@
       "aemSitePath": "/content/vistrademonstration",
       "aemAssetsFolderPath": "/content/dam/vistrademonstration",
       "aemSiteName": "vistrademonstration",
-      "aemSiteTitle": "vistrademonstration"
+      "aemSiteTitle": "vistrademonstration",
+      "baseUrl": "https://author-p87302-e1492027.adobeaemcloud.com"
     }
   }
 }
