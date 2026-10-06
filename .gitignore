@@ -8,3 +8,4 @@ helix-importer-ui
 *.bak
 .idea
 migration-work/navigation-validation/
+migration-work/footer-validation/
