@@ -148,49 +148,98 @@ function stripButtons(nav) {
 }
 
 /**
- * Decorates call-to-action links in nav tools. A label written as
- * "Short: detail" shows the short label on small screens and the full label
- * on wider screens.
+ * Unwraps a bold wrapper around (or inside) a link.
+ * @param {Element} link link element
+ * @returns {boolean} whether the link was bold
+ */
+function unwrapStrong(link) {
+  const strong = link.querySelector('strong') || link.closest('strong');
+  if (!strong) return false;
+  if (link.contains(strong)) strong.replaceWith(...strong.childNodes);
+  else strong.replaceWith(link);
+  return true;
+}
+
+/**
+ * Decorates the tools section: a bold link becomes the call-to-action
+ * button, other links are plain tool links.
  * @param {Element} navTools tools section
  */
 function decorateTools(navTools) {
   navTools.querySelectorAll('a').forEach((link) => {
-    link.classList.add('nav-cta');
-    // icons authored next to the link (same paragraph) belong inside the button
-    const siblingIcons = [...(link.parentElement?.children || [])]
-      .filter((el) => el !== link && el.classList.contains('icon'));
-    link.prepend(...siblingIcons);
-    const label = link.textContent.trim();
-    const sep = label.indexOf(':');
-    const icons = [...link.querySelectorAll('.icon')];
-    link.textContent = '';
-    link.append(...icons);
-    if (sep > 0) {
-      const short = document.createElement('span');
-      short.className = 'nav-cta-short';
-      short.textContent = label.slice(0, sep).trim();
-      const full = document.createElement('span');
-      full.className = 'nav-cta-full';
-      full.textContent = label;
-      link.append(short, full);
-    } else {
-      const text = document.createElement('span');
-      text.textContent = label;
-      link.append(text);
-    }
-    link.title = label;
-    if (!link.getAttribute('aria-label')) link.setAttribute('aria-label', label);
+    link.classList.add(unwrapStrong(link) ? 'nav-cta' : 'nav-tool-link');
   });
 }
 
 /**
- * Marks paragraphs in the nav sections that contain only icons (e.g. a star rating).
- * @param {Element} navSections sections element
+ * Turns a utility link into a search toggle that reveals an inline search
+ * form. The link target is used as the search page, its label as placeholder.
+ * @param {Element} link authored search link
  */
-function decorateSections(navSections) {
-  navSections.querySelectorAll('p').forEach((p) => {
-    if (p.querySelector('.icon') && !p.textContent.trim()) p.classList.add('nav-icon-group');
+function buildSearch(link) {
+  const item = link.closest('li') || link.parentElement;
+  const label = link.textContent.trim() || 'Search';
+  item.classList.add('nav-search');
+
+  const form = document.createElement('form');
+  form.className = 'nav-search-form';
+  form.action = link.href;
+  form.method = 'get';
+  form.setAttribute('role', 'search');
+
+  const input = document.createElement('input');
+  input.type = 'search';
+  input.name = 'query';
+  input.placeholder = label;
+  input.setAttribute('aria-label', label);
+  form.append(input);
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'nav-search-close';
+  close.setAttribute('aria-label', `Close ${label.toLowerCase()}`);
+  close.innerHTML = '<span class="icon icon-xmark"></span>';
+  item.append(form, close);
+
+  const setOpen = (open) => {
+    item.classList.toggle('is-open', open);
+    link.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) input.focus();
+  };
+  link.setAttribute('role', 'button');
+  link.setAttribute('aria-expanded', 'false');
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (item.classList.contains('is-open') && input.value.trim()) form.requestSubmit();
+    else setOpen(!item.classList.contains('is-open'));
   });
+  close.addEventListener('click', () => {
+    input.value = '';
+    setOpen(false);
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+}
+
+/**
+ * Decorates the utility bar: the first list holds audience links (a bold
+ * link marks the current one), the second holds utility links such as
+ * search, phone and language.
+ * @param {Element} navUtility utility section
+ */
+function decorateUtility(navUtility) {
+  navUtility.querySelectorAll(':scope .default-content-wrapper > ul').forEach((list, i) => {
+    list.classList.add(i === 0 ? 'nav-utility-left' : 'nav-utility-right');
+  });
+  navUtility.querySelectorAll('a').forEach((link) => {
+    if (unwrapStrong(link)) {
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    }
+  });
+  const searchLink = navUtility.querySelector('a .icon-magnifier')?.closest('a');
+  if (searchLink) buildSearch(searchLink);
 }
 
 /**
@@ -275,14 +324,23 @@ export default async function decorate(block) {
   nav.setAttribute('aria-label', 'Main');
   while (fragment && fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  ['brand', 'sections', 'tools'].forEach((c, i) => {
-    const section = nav.children[i];
-    if (section) section.classList.add(`nav-${c}`);
+  // the logo section is the brand; sections before it form the utility bar,
+  // the first section after it holds the menus, the rest are tools
+  const navSectionEls = [...nav.children];
+  const brandIndex = Math.max(0, navSectionEls.findIndex((section) => section.querySelector('img, picture') && !section.querySelector('ul')));
+  navSectionEls.forEach((section, i) => {
+    let name = 'tools';
+    if (i < brandIndex) name = 'utility';
+    else if (i === brandIndex) name = 'brand';
+    else if (i === brandIndex + 1) name = 'sections';
+    section.classList.add(`nav-${name}`);
   });
 
   rebaseImages(nav, path);
   stripButtons(nav);
   decorateIconTokens(nav);
+  const navUtility = nav.querySelector('.nav-utility');
+  if (navUtility) decorateUtility(navUtility);
   decorateIcons(nav);
   nav.querySelectorAll('.icon img').forEach((icon) => { icon.loading = 'eager'; });
 
@@ -298,16 +356,36 @@ export default async function decorate(block) {
   }
 
   const navSections = nav.querySelector('.nav-sections');
-  if (navSections) {
-    decorateSections(navSections);
-    decorateMenus(navSections);
-  }
+  if (navSections) decorateMenus(navSections);
 
   const navTools = nav.querySelector('.nav-tools');
   if (navTools) decorateTools(navTools);
 
+  const hamburger = document.createElement('button');
+  hamburger.type = 'button';
+  hamburger.className = 'nav-hamburger';
+  hamburger.setAttribute('aria-controls', 'nav');
+  hamburger.setAttribute('aria-expanded', 'false');
+  hamburger.setAttribute('aria-label', 'Open navigation');
+  hamburger.innerHTML = '<span class="nav-hamburger-icon"></span>';
+  const setExpanded = (expanded) => {
+    nav.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    hamburger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    hamburger.setAttribute('aria-label', expanded ? 'Close navigation' : 'Open navigation');
+  };
+  hamburger.addEventListener('click', () => setExpanded(nav.getAttribute('aria-expanded') !== 'true'));
+  setExpanded(false);
+  nav.append(hamburger);
+
+  // reset open menus when crossing the desktop breakpoint
+  window.matchMedia('(width >= 900px)').addEventListener('change', () => {
+    setExpanded(false);
+    if (navSections) closeMenus(navSections);
+  });
+
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
+  if (navUtility) navWrapper.append(navUtility);
   navWrapper.append(nav);
   block.append(navWrapper);
 }
