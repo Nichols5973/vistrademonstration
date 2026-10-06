@@ -123,6 +123,10 @@ footer .footer a.footer-cta.secondary:focus {
 }
 
 /* bottom bar */
+footer .footer .footer-badges img {
+  width: 105px;
+}
+
 footer .footer .footer-bottom {
   display: flex;
   flex-direction: column;
@@ -153,18 +157,20 @@ footer .footer .footer-social a:focus {
   background-color: var(--footer-cyan);
 }
 
-footer .footer .footer-social img {
+footer .footer .footer-social .icon {
+  display: block;
   width: 13px;
   height: 25px;
+}
+
+footer .footer .footer-social .icon img {
+  width: 100%;
+  height: 100%;
 }
 
 footer .footer .footer-legal {
   font-size: 14px;
   line-height: 30px;
-}
-
-footer .footer .footer-badges img {
-  width: 105px;
 }
 
 @media (width >= 900px) {

@@ -476,3 +476,32 @@ export function dynamicMediaAssetProcess(pictureElement, qParam) {
     });
   }
 }
+
+/**
+ * Converts :icon-name: tokens left in text (e.g. rich text authored in AEM)
+ * into EDS icon spans.
+ * @param {Element} container element to scan
+ */
+export function decorateIconTokens(container) {
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const textNodes = [];
+  while (walker.nextNode()) {
+    if (/:[a-z0-9-]+:/.test(walker.currentNode.nodeValue)) textNodes.push(walker.currentNode);
+  }
+  textNodes.forEach((node) => {
+    const frag = document.createDocumentFragment();
+    node.nodeValue.split(/(:[a-z0-9-]+:)/).forEach((part) => {
+      const match = part.match(/^:([a-z0-9-]+):$/);
+      if (match) {
+        const icon = document.createElement('span');
+        icon.className = `icon icon-${match[1]}`;
+        frag.append(icon);
+      } else if (part.trim()) {
+        frag.append(document.createTextNode(part));
+      } else if (part && frag.lastChild) {
+        frag.append(document.createTextNode(' '));
+      }
+    });
+    node.replaceWith(frag);
+  });
+}

@@ -1,5 +1,8 @@
+import { decorateIcons } from '../../scripts/aem.js';
 import { isAuthorEnvironment } from '../../scripts/scripts.js';
-import { getLanguage, getSiteName, PATH_PREFIX } from '../../scripts/utils.js';
+import {
+  getLanguage, getSiteName, PATH_PREFIX, decorateIconTokens,
+} from '../../scripts/utils.js';
 
 /**
  * Fetches the footer fragment markup: the AEM-authored footer page first,
@@ -31,12 +34,12 @@ function rebaseImages(container, base) {
 }
 
 /**
- * Checks whether an element holds only an image (optionally inside a link).
+ * Checks whether an element holds only images or icons (optionally inside a link).
  * @param {Element} el element to test
  * @returns {boolean}
  */
 function isMediaOnly(el) {
-  return !!el.querySelector('img') && !el.textContent.trim();
+  return !!el.querySelector('img, .icon') && !el.textContent.trim();
 }
 
 /**
@@ -108,7 +111,8 @@ function buildBottomBar(section) {
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         if (!link.getAttribute('aria-label')) {
-          const label = link.title || link.querySelector('img')?.alt || '';
+          const iconName = link.querySelector('.icon')?.className.match(/icon-([a-z0-9-]+)/)?.[1];
+          const label = link.title || link.querySelector('img')?.alt || iconName || '';
           link.setAttribute('aria-label', `${label} (opens in a new tab)`.trim());
         }
       });
@@ -143,6 +147,7 @@ export default async function decorate(block) {
   const fragment = document.createElement('div');
   fragment.innerHTML = result.html;
   rebaseImages(fragment, result.base);
+  decorateIconTokens(fragment);
 
   const sections = [...fragment.children].filter((el) => el.tagName === 'DIV');
   const footer = document.createElement('div');
@@ -151,5 +156,6 @@ export default async function decorate(block) {
   if (sections[1]) footer.append(buildBottomBar(sections[1]));
   sections.slice(2).forEach((section) => footer.append(section));
 
+  decorateIcons(footer);
   block.append(footer);
 }

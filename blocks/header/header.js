@@ -1,7 +1,7 @@
 import { getMetadata, decorateIcons } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 import {
-  getHostname, getLanguage, getSiteName, PATH_PREFIX,
+  getHostname, getLanguage, getSiteName, PATH_PREFIX, decorateIconTokens,
 } from '../../scripts/utils.js';
 import { isAuthorEnvironment } from '../../scripts/scripts.js';
 
@@ -135,35 +135,6 @@ function rebaseImages(nav, fragmentPath) {
     if (value && !/^(\/|[a-z]+:|data:|\.\/media_)/i.test(value)) {
       el.setAttribute(attr, new URL(value, base).pathname);
     }
-  });
-}
-
-/**
- * Converts :icon-name: tokens left in text (e.g. rich text authored in AEM)
- * into EDS icon spans.
- * @param {Element} container element to scan
- */
-function decorateIconTokens(container) {
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-  const textNodes = [];
-  while (walker.nextNode()) {
-    if (/:[a-z0-9-]+:/.test(walker.currentNode.nodeValue)) textNodes.push(walker.currentNode);
-  }
-  textNodes.forEach((node) => {
-    const frag = document.createDocumentFragment();
-    node.nodeValue.split(/(:[a-z0-9-]+:)/).forEach((part) => {
-      const match = part.match(/^:([a-z0-9-]+):$/);
-      if (match) {
-        const span = document.createElement('span');
-        span.className = `icon icon-${match[1]}`;
-        frag.append(span);
-      } else if (part.trim()) {
-        frag.append(document.createTextNode(part));
-      } else if (part && frag.lastChild) {
-        frag.append(document.createTextNode(' '));
-      }
-    });
-    node.replaceWith(frag);
   });
 }
 
