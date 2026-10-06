@@ -342,6 +342,10 @@ export default async function decorate(block) {
   const navUtility = nav.querySelector('.nav-utility');
   if (navUtility) decorateUtility(navUtility);
   decorateIcons(nav);
+  // icons already decorated by the fragment loader get a second image; keep one
+  nav.querySelectorAll('span.icon').forEach((span) => {
+    span.querySelectorAll(':scope > img:not(:first-of-type)').forEach((img) => img.remove());
+  });
   nav.querySelectorAll('.icon img').forEach((icon) => { icon.loading = 'eager'; });
 
   const navBrand = nav.querySelector('.nav-brand');
